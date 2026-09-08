@@ -1,0 +1,30 @@
+{
+  "index_patterns": ["centry-integrations-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "occurred_at": { "type": "date" },
+        "event_type": { "type": "keyword" },
+        "marketplace": { "type": "keyword" },
+        "endpoint": { "type": "keyword" },
+        "http_method": { "type": "keyword" },
+        "http_status": { "type": "integer" },
+        "company_id": { "type": "keyword" },
+        "integration_config_id": { "type": "keyword" },
+        "product_id": { "type": "keyword" },
+        "worker": { "type": "keyword" },
+        "queue": { "type": "keyword" },
+        "job_id": { "type": "keyword" },
+        "duration_ms": { "type": "float" },
+        "status": { "type": "keyword" },
+        "error": { "type": "text" },
+        "payload": { "type": "object", "enabled": false },
+        "response": { "type": "object", "enabled": false }
+      }
+    }
+  }
+}

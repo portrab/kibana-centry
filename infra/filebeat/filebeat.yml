@@ -1,0 +1,31 @@
+# Roda diretamente na VM do Centry (Oracle Cloud), sem Docker — o sistema
+# legado não usa containers (ver tech_restrictions_context.md). Este arquivo
+# é o ponto que liga o arquivo intermediário gerado pela gem
+# centry_observability ao Elasticsearch/Kibana.
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /path/to/centry/log/integrations.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    fields:
+      source: centry
+    fields_under_root: true
+
+setup.template.name: "centry-integrations"
+setup.template.pattern: "centry-integrations-*"
+setup.template.enabled: false # o template é carregado manualmente, ver elasticsearch/templates/
+
+output.elasticsearch:
+  hosts: ["${ELASTICSEARCH_HOST:localhost:9200}"]
+  index: "centry-integrations-%{+yyyy.MM.dd}"
+
+setup.ilm.enabled: false
+
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat.log
+  keepfiles: 7
