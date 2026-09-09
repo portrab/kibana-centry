@@ -1,123 +1,123 @@
-# Objetivo do Projeto
+# Objetivo del Proyecto
 
-## Identificação do Sistema
+## Identificación del Sistema
 
-**Nome do sistema:** Centry
+**Nombre del sistema:** Centry
 
-**Status:** Produção
+**Estado:** Producción
 
-**Repositório de código:** Repositório privado `belanit-inventario`
+**Repositorio de código:** Repositorio privado `belanit-inventario`
 
-**Última atualização:** 2026-09-07 — Pablo Guzman, Desenvolvedor
+**Última actualización:** 2026-09-07 — Pablo Guzman, Desarrollador
 
 ### Ambientes
 
 | Ambiente | URL |
 |---|---|
-| Desenvolvimento | Não informado |
-| Homologação | Não existe / não informado |
-| Produção | Não informado |
+| Desarrollo | No informado |
+| Homologación | No existe / no informado |
+| Producción | No informado |
 
 ---
 
-## Problema a Ser Resolvido
+## Problema a Resolver
 
-**Situação atual:** Hoje, a investigação de erros e comportamentos no Centry depende fortemente de acesso manual à consola de produção. Para analisar falhas da aplicação, é necessário executar funções diretamente na consola Rails em produção. Para erros em processos assíncronos, utiliza-se a morgue do Sidekiq. Também existe um histórico de sincronizações por produto, mas ele mostra apenas parte das respostas das APIs e não oferece detalhes suficientes sobre o que foi enviado, qual foi a resposta completa recebida e como o processo se comportou ponta a ponta.
+**Situación actual:** Hoy, la investigación de errores y comportamientos en Centry depende fuertemente del acceso manual a la consola de producción. Para analizar fallas de la aplicación, es necesario ejecutar funciones directamente en la consola Rails en producción. Para errores en procesos asíncronos, se utiliza la morgue de Sidekiq. También existe un historial de sincronizaciones por producto, pero muestra solo parte de las respuestas de las APIs y no ofrece detalles suficientes sobre qué se envió, cuál fue la respuesta completa recibida y cómo se comportó el proceso de punta a punta.
 
-**Causa raiz:** O sistema não possui observabilidade centralizada nem trilhas de rastreabilidade suficientes para os processos internos, workers e chamadas para APIs externas. As informações relevantes estão dispersas entre consola Rails, ambiente de produção, morgue do Sidekiq e históricos parciais de sincronização.
+**Causa raíz:** El sistema no posee observabilidad centralizada ni trazas de trazabilidad suficientes para los procesos internos, workers y llamadas a APIs externas. La información relevante está dispersa entre la consola Rails, el ambiente de producción, la morgue de Sidekiq y los historiales parciales de sincronización.
 
-**Impacto:** O principal impacto recai sobre o time técnico responsável por dar suporte ao legado, especialmente Pablo Guzman, que precisa responder dúvidas sobre comportamentos, integrações e execução de workers sem contar com uma ferramenta centralizada de análise. Isso reduz a autonomia do time de suporte, que hoje não consegue investigar incidentes ou fluxos operacionais sem depender de alguém com acesso técnico à produção. Como consequência, a análise de problemas é mais lenta, mais manual e mais arriscada, além de criar gargalo no atendimento e na investigação de integrações com marketplaces.
-
----
-
-## Objetivo do Projeto
-
-**Onde devemos chegar com o projeto entregue:**
-
-- Permitir que o time de suporte investigue comportamentos e incidentes sem necessidade de acesso à consola de produção.
-- Visualizar requests e responses das integrações com marketplaces e outras plataformas em um único lugar, com contexto suficiente para análise operacional.
-- Detectar falhas de workers e integrações em menos tempo, com maior rastreabilidade do que ocorre em cada processo.
-- Disponibilizar métricas operacionais sobre volume e momento das requisições realizadas para os diferentes marketplaces integrados.
+**Impacto:** El principal impacto recae sobre el equipo técnico responsable de dar soporte al legado, especialmente Pablo Guzman, quien necesita responder dudas sobre comportamientos, integraciones y ejecución de workers sin contar con una herramienta centralizada de análisis. Esto reduce la autonomía del equipo de soporte, que hoy no puede investigar incidentes o flujos operativos sin depender de alguien con acceso técnico a producción. Como consecuencia, el análisis de problemas es más lento, más manual y más riesgoso, además de generar un cuello de botella en la atención y en la investigación de integraciones con marketplaces.
 
 ---
 
-## Visão Geral do Sistema
+## Objetivo del Proyecto
+
+**A dónde debemos llegar con el proyecto entregado:**
+
+- Permitir que el equipo de soporte investigue comportamientos e incidentes sin necesidad de acceso a la consola de producción.
+- Visualizar requests y responses de las integraciones con marketplaces y otras plataformas en un único lugar, con contexto suficiente para el análisis operativo.
+- Detectar fallas de workers e integraciones en menos tiempo, con mayor trazabilidad de lo que ocurre en cada proceso.
+- Disponer de métricas operativas sobre el volumen y el momento de las solicitudes realizadas hacia los distintos marketplaces integrados.
+
+---
+
+## Visión General del Sistema
 
 ### Propósito
 
-Centry é um sistema legado de integração com marketplaces e plataformas de e-commerce. Seu papel é intermediar sincronizações, trocas de dados e execução de processos entre clientes e canais externos, como marketplaces, lojas e plataformas comerciais. Mesmo existindo um movimento de migração de clientes para Anymarket, o Centry continua em operação e precisa de sustentação adequada. Este projeto existe para melhorar a capacidade de observação e suporte sobre esse sistema enquanto ele seguir ativo.
+Centry es un sistema legado de integración con marketplaces y plataformas de e-commerce. Su rol es intermediar sincronizaciones, intercambios de datos y ejecución de procesos entre clientes y canales externos, como marketplaces, tiendas y plataformas comerciales. Aun existiendo un movimiento de migración de clientes hacia Anymarket, Centry continúa en operación y necesita una sustentación adecuada. Este proyecto existe para mejorar la capacidad de observación y soporte sobre ese sistema mientras siga activo.
 
-### Público-Alvo e Usuários
+### Público Objetivo y Usuarios
 
-**Perfil 1 — Desenvolvedor responsável pelo legado**  
-_Descrição: profissional técnico responsável por investigar falhas, entender o comportamento da aplicação e manter o funcionamento do sistema legado._  
-_O que faz e quando faz: analisa incidentes, acompanha integrações, valida execução de workers e investiga comportamentos reportados por outras áreas, principalmente quando há falhas ou dúvidas operacionais._
+**Perfil 1 — Desarrollador responsable del legado**  
+_Descripción: profesional técnico responsable de investigar fallas, entender el comportamiento de la aplicación y mantener el funcionamiento del sistema legado._  
+_Qué hace y cuándo lo hace: analiza incidentes, hace seguimiento de integraciones, valida la ejecución de workers e investiga comportamientos reportados por otras áreas, principalmente cuando hay fallas o dudas operativas._
 
-**Perfil 2 — Time de Suporte**  
-_Descrição: equipe operacional que atende dúvidas, investiga comportamentos e acompanha problemas reportados no uso do sistema e das integrações._  
-_O que faz e quando faz: consulta informações sobre processos da aplicação, busca evidências sobre falhas em sincronizações e precisa entender o que aconteceu em integrações sem depender integralmente de acesso técnico à produção._
+**Perfil 2 — Equipo de Soporte**  
+_Descripción: equipo operativo que atiende dudas, investiga comportamientos y hace seguimiento de problemas reportados en el uso del sistema y de las integraciones._  
+_Qué hace y cuándo lo hace: consulta información sobre los procesos de la aplicación, busca evidencias sobre fallas en sincronizaciones y necesita entender qué ocurrió en las integraciones sin depender por completo del acceso técnico a producción._
 
 **Perfil 3 — Product Owner**  
-_Descrição: responsável por priorizar e decidir, junto ao time técnico, o que entra ou não no projeto de evolução do Centry._  
-_O que faz e quando faz: define prioridades, aprova escopo e acompanha as decisões sobre investimentos no sistema legado enquanto ele continua ativo._
+_Descripción: responsable de priorizar y decidir, junto al equipo técnico, qué entra o no en el proyecto de evolución de Centry._  
+_Qué hace y cuándo lo hace: define prioridades, aprueba el alcance y hace seguimiento de las decisiones sobre inversiones en el sistema legado mientras este continúa activo._
 
-### Contexto de Mercado e Posicionamento
+### Contexto de Mercado y Posicionamiento
 
-**Contexto de mercado:** O sistema atua no contexto de integração de operações de e-commerce e marketplaces, conectando clientes a canais como marketplaces chilenos e plataformas de loja virtual. Esse mercado exige confiabilidade nas sincronizações, capacidade de resposta rápida a falhas e boa visibilidade operacional sobre integrações externas.
+**Contexto de mercado:** El sistema opera en el contexto de integración de operaciones de e-commerce y marketplaces, conectando clientes con canales como marketplaces chilenos y plataformas de tienda virtual. Este mercado exige confiabilidad en las sincronizaciones, capacidad de respuesta rápida ante fallas y buena visibilidad operativa sobre las integraciones externas.
 
-**Posicionamento:** Centry não está sendo tratado como uma nova plataforma estratégica de crescimento, mas como um sistema legado crítico que ainda precisa operar com suporte adequado enquanto os clientes são migrados. O valor deste projeto está em dar visibilidade operacional e rastreabilidade a uma aplicação que ainda sustenta integrações importantes, reduzindo dependência de análise manual e acesso privilegiado à produção.
+**Posicionamiento:** Centry no se está tratando como una nueva plataforma estratégica de crecimiento, sino como un sistema legado crítico que aún necesita operar con soporte adecuado mientras los clientes son migrados. El valor de este proyecto está en dar visibilidad operativa y trazabilidad a una aplicación que aún sostiene integraciones importantes, reduciendo la dependencia del análisis manual y del acceso privilegiado a producción.
 
-**Público-alvo de mercado:** O sistema atende operações de clientes que vendem em marketplaces e plataformas de e-commerce e dependem de integrações com canais como Falabella, Ripley, Mercado Libre, Shopify, Bsale, WooCommerce e Prestashop.
+**Público objetivo de mercado:** El sistema atiende operaciones de clientes que venden en marketplaces y plataformas de e-commerce y dependen de integraciones con canales como Falabella, Ripley, Mercado Libre, Shopify, Bsale, WooCommerce y Prestashop.
 
-### Contexto de Uso pelo Cliente
+### Contexto de Uso por el Cliente
 
-Dentro da operação, o Centry funciona como camada integradora entre clientes e múltiplos canais externos, suportando sincronizações e trocas de informação via APIs. Ele se relaciona com marketplaces chilenos, como Falabella, Ripley e Mercado Libre, além de plataformas como Shopify, Bsale, WooCommerce e Prestashop, entre outras. No dia a dia, a sustentação do sistema depende de entender o que foi processado, o que foi enviado às APIs, que respostas foram recebidas e como os workers executaram cada etapa. Hoje essa análise é difícil e fragmentada, o que justifica a necessidade de uma solução de observabilidade mais adequada.
-
----
-
-## Contexto de Negócio
-
-**Sobre o negócio:** O projeto está inserido em um cenário de sustentação de sistema legado. Embora exista um movimento de migração dos clientes do Centry para Anymarket, o sistema continua relevante enquanto permanecer em operação. Portanto, o objetivo de negócio não é expandir o produto, mas reduzir o custo operacional e aumentar a capacidade de suporte, investigação e entendimento do que ocorre nas integrações ainda ativas.
-
-**Domínio e segmento:** O sistema se insere no domínio de integrações para e-commerce e marketplaces, com foco em sincronização de dados e execução de processos entre clientes e plataformas externas.
-
-**Processo atual (como as pessoas fazem hoje):** Quando ocorre um erro, dúvida operacional ou necessidade de entender o comportamento de uma integração, a investigação é feita manualmente por alguém com conhecimento técnico e acesso à produção. Essa pessoa consulta a consola Rails, executa funções, verifica a morgue do Sidekiq para workers com falha e analisa históricos parciais de sincronização por produto. O fluxo é lento, fragmentado e pouco acessível para o time de suporte.
-
-**Restrições e regras de negócio relevantes:** Há preocupação com impacto em performance e com a política de retenção de logs. O projeto também deve respeitar o caráter transitório do sistema no contexto da migração para Anymarket, evitando investimentos que impliquem reestruturação ampla do produto ou mudanças em regras de negócio das sincronizações.
+Dentro de la operación, Centry funciona como una capa integradora entre clientes y múltiples canales externos, dando soporte a sincronizaciones e intercambios de información vía APIs. Se relaciona con marketplaces chilenos, como Falabella, Ripley y Mercado Libre, además de plataformas como Shopify, Bsale, WooCommerce y Prestashop, entre otras. En el día a día, la sustentación del sistema depende de entender qué se procesó, qué se envió a las APIs, qué respuestas se recibieron y cómo ejecutaron los workers cada etapa. Hoy ese análisis es difícil y fragmentado, lo que justifica la necesidad de una solución de observabilidad más adecuada.
 
 ---
 
-## Escopo Macro do Projeto
+## Contexto de Negocio
 
-| # | Módulo / Epic | Prioridade |
+**Sobre el negocio:** El proyecto se inserta en un escenario de sustentación de sistema legado. Aunque existe un movimiento de migración de los clientes de Centry hacia Anymarket, el sistema sigue siendo relevante mientras permanezca en operación. Por lo tanto, el objetivo de negocio no es expandir el producto, sino reducir el costo operativo y aumentar la capacidad de soporte, investigación y entendimiento de lo que ocurre en las integraciones aún activas.
+
+**Dominio y segmento:** El sistema se inserta en el dominio de integraciones para e-commerce y marketplaces, con foco en la sincronización de datos y la ejecución de procesos entre clientes y plataformas externas.
+
+**Proceso actual (cómo lo hacen hoy):** Cuando ocurre un error, una duda operativa o la necesidad de entender el comportamiento de una integración, la investigación se realiza manualmente por alguien con conocimiento técnico y acceso a producción. Esa persona consulta la consola Rails, ejecuta funciones, revisa la morgue de Sidekiq en busca de workers con falla y analiza los historiales parciales de sincronización por producto. El flujo es lento, fragmentado y poco accesible para el equipo de soporte.
+
+**Restricciones y reglas de negocio relevantes:** Existe preocupación por el impacto en el rendimiento y por la política de retención de logs. El proyecto también debe respetar el carácter transitorio del sistema en el contexto de la migración hacia Anymarket, evitando inversiones que impliquen una reestructuración amplia del producto o cambios en las reglas de negocio de las sincronizaciones.
+
+---
+
+## Alcance Macro del Proyecto
+
+| # | Módulo / Épica | Prioridad |
 |---|---|---|
-| 1 | Centralização de logs da aplicação | Alta |
-| 2 | Trazabilidade de requests e responses para marketplaces | Alta |
-| 3 | Dashboards e métricas operacionais | Média |
-| 4 | Busca e filtros para suporte | Alta |
-| 5 | Alertas e monitoramento proativo | Média |
+| 1 | Centralización de logs de la aplicación | Alta |
+| 2 | Trazabilidad de requests y responses hacia marketplaces | Alta |
+| 3 | Dashboards y métricas operativas | Media |
+| 4 | Búsqueda y filtros para soporte | Alta |
+| 5 | Alertas y monitoreo proactivo | Media |
 
 ---
 
-## Escopo Negativo do Projeto
+## Alcance Negativo del Proyecto
 
-| O que não será feito | Motivo |
+| Qué no se hará | Motivo |
 |---|---|
-| Corrigir todos os bugs existentes da aplicação | O objetivo do projeto é melhorar observabilidade e rastreabilidade, não atuar como iniciativa ampla de correção do legado. |
-| Substituir o Centry | O projeto busca dar suporte melhor ao sistema atual enquanto ele continuar em operação. |
-| Modificar regras de negócio das sincronizações | A iniciativa é focada em visibilidade operacional, não em alterar o comportamento funcional das integrações. |
-| Conduzir a migração de clientes para Anymarket como parte desta entrega | A migração é um movimento paralelo e não faz parte do escopo desta iniciativa de observabilidade. |
+| Corregir todos los bugs existentes de la aplicación | El objetivo del proyecto es mejorar la observabilidad y la trazabilidad, no actuar como una iniciativa amplia de corrección del legado. |
+| Reemplazar Centry | El proyecto busca dar mejor soporte al sistema actual mientras este continúe en operación. |
+| Modificar reglas de negocio de las sincronizaciones | La iniciativa está enfocada en la visibilidad operativa, no en alterar el comportamiento funcional de las integraciones. |
+| Llevar adelante la migración de clientes hacia Anymarket como parte de esta entrega | La migración es un movimiento paralelo y no forma parte del alcance de esta iniciativa de observabilidad. |
 
 ---
 
-## Pessoas e Interesses (Stakeholders)
+## Personas e Intereses (Stakeholders)
 
-| Nome | Empresa / Área | Papel no Projeto |
+| Nombre | Empresa / Área | Rol en el Proyecto |
 |---|---|---|
-| Pablo Guzman | Desenvolvimento | Desenvolvedor responsável pelo legado e usuário principal da solução |
-| Product Owner | Produto | Decisor e priorizador do projeto |
-| Time de Suporte | Suporte | Área usuária da ferramenta e principal beneficiária da autonomia operacional |
+| Pablo Guzman | Desarrollo | Desarrollador responsable del legado y usuario principal de la solución |
+| Product Owner | Producto | Decisor y priorizador del proyecto |
+| Equipo de Soporte | Soporte | Área usuaria de la herramienta y principal beneficiaria de la autonomía operativa |
 
 ---
 
-> **Próximo passo:** com este documento preenchido e revisado, acione o `makuco-specify` referenciando este arquivo para gerar as specs de cada módulo listado no Escopo Macro.
+> **Próximo paso:** con este documento completado y revisado, invoca `makuco-specify` referenciando este archivo para generar las specs de cada módulo listado en el Alcance Macro.

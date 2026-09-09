@@ -1,110 +1,110 @@
-# Detalhamento do Escopo Macro do Projeto
+# Detalle del Alcance Macro del Proyecto
 
-## Visão Geral do Produto
+## Visión General del Producto
 
-Centry é um sistema legado de integração com marketplaces que ainda precisa operar com suporte efetivo enquanto ocorre a migração de clientes para Anymarket. Este projeto adiciona uma camada de observabilidade focada em requests e responses das integrações, para reduzir a dependência de acesso técnico à produção e melhorar a capacidade de investigação operacional. Quando concluído, o time terá uma visão centralizada dos logs das integrações, rastreabilidade por produto e sincronização, mecanismos de busca para suporte, alertas sobre falhas relevantes e dashboards com métricas operacionais essenciais.
+Centry es un sistema legado de integración con marketplaces que aún necesita operar con soporte efectivo mientras ocurre la migración de clientes hacia Anymarket. Este proyecto agrega una capa de observabilidad enfocada en requests y responses de las integraciones, para reducir la dependencia del acceso técnico a producción y mejorar la capacidad de investigación operativa. Al concluir, el equipo tendrá una visión centralizada de los logs de las integraciones, trazabilidad por producto y sincronización, mecanismos de búsqueda para soporte, alertas sobre fallas relevantes y dashboards con métricas operativas esenciales.
 
 ---
 
 ## Roadmap
 
-| Ordem | Módulo | O que entrega ao negócio |
+| Orden | Módulo | Qué entrega al negocio |
 |---|---|---|
-| 1 | Centralização de logs de integrações | Dá visibilidade centralizada das chamadas feitas a marketplaces sem depender de consola de produção. |
-| 2 | Trazabilidade de requests/responses por produto | Permite entender o estado e o histórico detalhado das sincronizações por produto. |
-| 3 | Alertas e monitoramento operacional | Ajuda a detectar falhas críticas com mais rapidez e reduzir tempo de reação. |
-| 4 | Dashboards e métricas operacionais | Fornece visão analítica sobre volume de chamadas, falhas e comportamento dos workers. |
+| 1 | Centralización de logs de integraciones | Da visibilidad centralizada de las llamadas realizadas a marketplaces sin depender de la consola de producción. |
+| 2 | Trazabilidad de requests/responses por producto | Permite entender el estado y el historial detallado de las sincronizaciones por producto. |
+| 3 | Alertas y monitoreo operativo | Ayuda a detectar fallas críticas con mayor rapidez y reducir el tiempo de reacción. |
+| 4 | Dashboards y métricas operativas | Ofrece una visión analítica sobre el volumen de llamadas, fallas y comportamiento de los workers. |
 
 ---
 
-## Módulos e Features
+## Módulos y Features
 
 ---
 
-### Módulo: Centralização de logs de integrações
+### Módulo: Centralización de logs de integraciones
 
-Este módulo resolve a falta de visibilidade centralizada sobre as chamadas realizadas pelo Centry aos marketplaces e outras integrações externas. Ele será usado principalmente por desenvolvimento e suporte para consultar evidências operacionais sem acessar a consola de produção. O valor entregue é reduzir a investigação manual e criar uma base única de consulta para o comportamento das integrações.
+Este módulo resuelve la falta de visibilidad centralizada sobre las llamadas realizadas por Centry a los marketplaces y otras integraciones externas. Será usado principalmente por desarrollo y soporte para consultar evidencias operativas sin acceder a la consola de producción. El valor entregado es reducir la investigación manual y crear una base única de consulta sobre el comportamiento de las integraciones.
 
-#### Feature: Coleta de logs de requests em Rails e Sidekiq
+#### Feature: Recolección de logs de requests en Rails y Sidekiq
 
-A feature deve registrar os requests realizados a marketplaces a partir da aplicação Rails e também dos workers executados em Sidekiq, cobrindo todas as integrações relevantes. O foco inicial não é capturar logs genéricos de erros internos do Rails, mas sim os eventos diretamente ligados às chamadas externas feitas pelo sistema. Isso diferencia a solução de uma implementação genérica de logging, porque o escopo inicial é claramente restrito à observabilidade das integrações com marketplaces.
+La feature debe registrar los requests realizados a marketplaces desde la aplicación Rails y también desde los workers ejecutados en Sidekiq, cubriendo todas las integraciones relevantes. El foco inicial no es capturar logs genéricos de errores internos de Rails, sino los eventos directamente ligados a las llamadas externas realizadas por el sistema. Esto diferencia la solución de una implementación genérica de logging, porque el alcance inicial está claramente restringido a la observabilidad de las integraciones con marketplaces.
 
-#### Feature: Visualização centralizada de logs operacionais
+#### Feature: Visualización centralizada de logs operativos
 
-A feature deve permitir que os usuários consultem em um único lugar os logs das integrações já capturados. O uso esperado é somente leitura: suporte e desenvolvimento poderão ver os registros e utilizá-los para análise e reporte de incidentes, sem qualquer ação de correção ou reprocessamento a partir dessa interface. O objetivo é substituir a dependência da consola de produção por uma visão operacional acessível e consistente.
+La feature debe permitir que los usuarios consulten en un único lugar los logs de las integraciones ya capturados. El uso esperado es solo de lectura: soporte y desarrollo podrán ver los registros y utilizarlos para análisis y reporte de incidentes, sin ninguna acción de corrección o reprocesamiento desde esa interfaz. El objetivo es sustituir la dependencia de la consola de producción por una visión operativa accesible y consistente.
 
-#### Feature: Registro estruturado de dados mínimos por log
+#### Feature: Registro estructurado de datos mínimos por log
 
-Cada log precisa armazenar um conjunto mínimo de informações para que a análise seja realmente útil no contexto do produto: data, marketplace, endpoint, payload, resposta recebida, HTTP status, worker relacionado, company_id, integration_config_id e product_id. Além disso, como o projeto lida com integrações reais, campos sensíveis como tokens e api_keys não devem ser persistidos em claro. Quando payloads ou responses forem muito grandes, o comportamento esperado é armazená-los de forma comprimida para equilibrar utilidade analítica e restrições de performance e volume.
-
----
-
-### Módulo: Trazabilidade de requests/responses por produto
-
-Este módulo resolve a dificuldade de entender, com detalhes, o que ocorreu na sincronização de um produto específico. Ele é útil para investigar incidentes operacionais e esclarecer o estado das integrações por item, especialmente quando o histórico atual é insuficiente. O valor entregue é permitir leitura contextualizada de requests e responses com vínculo à sincronização real do produto.
-
-#### Feature: Histórico detalhado de sincronização por produto
-
-A feature deve apresentar a trilha das interações de integração relacionadas a um produto específico, permitindo entender em que estado a sincronização se encontra e o que ocorreu ao longo do fluxo. O foco não é apenas a requisição isolada, mas a leitura operacional por produto, que é a forma mais útil para o contexto atual do Centry. Isso amplia o histórico existente, hoje parcial, para uma visão mais confiável e acionável.
-
-#### Feature: Relação entre request e sincronização concreta
-
-Cada request registrado deve poder ser associado a uma sincronização específica, para que a investigação não fique desconectada do processo real do negócio. Essa associação é importante porque o problema atual não é somente ver uma chamada HTTP, mas compreender qual sincronização ela afetou e em qual contexto ocorreu. Sempre que aplicável, a informação também deve indicar o worker relacionado ao processamento.
-
-#### Feature: Exibição de detalhes técnicos relevantes da chamada
-
-A feature deve exibir, além dos campos mínimos já definidos, o método HTTP e a duração da chamada, pois essas informações ajudam a diferenciar falhas de negócio, falhas de integração e degradação de performance. O objetivo não é transformar a solução em uma ferramenta técnica genérica de APM, mas oferecer dados suficientes para suporte e desenvolvimento compreenderem o comportamento das integrações no nível necessário ao produto.
-
-#### Feature: Busca com filtros obrigatórios para investigação
-
-A consulta de requests e responses deve contar com filtros obrigatórios para evitar buscas amplas demais e ajudar na performance da solução. Os filtros obrigatórios definidos até agora são: cliente, marketplace, endpoint, HTTP status, método HTTP e produto. Essa regra de uso diferencia a busca de uma pesquisa livre genérica, pois reflete a necessidade operacional de encontrar rapidamente o recorte correto sem sobrecarregar o sistema.
+Cada log necesita almacenar un conjunto mínimo de información para que el análisis sea realmente útil en el contexto del producto: fecha, marketplace, endpoint, payload, respuesta recibida, HTTP status, worker relacionado, company_id, integration_config_id y product_id. Además, como el proyecto trata con integraciones reales, campos sensibles como tokens y api_keys no deben persistirse en texto plano. Cuando los payloads o responses sean muy grandes, el comportamiento esperado es almacenarlos de forma comprimida para equilibrar la utilidad analítica con las restricciones de performance y volumen.
 
 ---
 
-### Módulo: Alertas e monitoramento operacional
+### Módulo: Trazabilidad de requests/responses por producto
 
-Este módulo resolve a detecção tardia de falhas críticas no comportamento do sistema, especialmente em workers e em cenários de alto volume de erro. Ele será usado inicialmente por desenvolvimento e pela liderança funcional do projeto para acompanhar condições anormais sem depender apenas de análise reativa. O valor entregue é reduzir o tempo para perceber incidentes importantes e reagir com mais rapidez.
+Este módulo resuelve la dificultad de entender, con detalle, qué ocurrió en la sincronización de un producto específico. Es útil para investigar incidentes operativos y esclarecer el estado de las integraciones por ítem, especialmente cuando el historial actual es insuficiente. El valor entregado es permitir una lectura contextualizada de requests y responses con vínculo a la sincronización real del producto.
 
-#### Feature: Geração de alertas para workers mortos
+#### Feature: Historial detallado de sincronización por producto
 
-A feature deve identificar situações em que existam workers mortos e transformar esse evento em um alerta visível. Como hoje a verificação depende de consulta manual, esse recurso antecipa a percepção de problemas críticos em processos assíncronos. O escopo da feature é sinalizar o incidente, não corrigi-lo automaticamente.
+La feature debe presentar la traza de las interacciones de integración relacionadas con un producto específico, permitiendo entender en qué estado se encuentra la sincronización y qué ocurrió a lo largo del flujo. El foco no es solo la solicitud aislada, sino la lectura operativa por producto, que es la forma más útil para el contexto actual de Centry. Esto amplía el historial existente, hoy parcial, hacia una visión más confiable y accionable.
 
-#### Feature: Geração de alertas para alto volume de falhas
+#### Feature: Relación entre request y sincronización concreta
 
-A feature deve alertar quando houver volume anormalmente alto de falhas nas integrações monitoradas. O objetivo é permitir que o time perceba degradações operacionais de forma mais rápida, especialmente em integrações com marketplaces. Os critérios exatos de limiar ainda poderão ser refinados depois, mas o tipo de evento já está definido como requisito de escopo.
+Cada request registrado debe poder asociarse a una sincronización específica, para que la investigación no quede desconectada del proceso real del negocio. Esta asociación es importante porque el problema actual no es solo ver una llamada HTTP, sino comprender a qué sincronización afectó y en qué contexto ocurrió. Siempre que sea aplicable, la información también debe indicar el worker relacionado con el procesamiento.
 
-#### Feature: Distribuição de alertas em dashboard e por e-mail
+#### Feature: Exhibición de detalles técnicos relevantes de la llamada
 
-Os alertas precisam ser visíveis em dashboard e, idealmente, também enviados por e-mail. Os destinatários iniciais são Pablo Guzman e o Product Owner, pois ambos participam das decisões e da resposta operacional ao sistema legado. Isso garante que a solução não seja apenas passiva, exigindo que alguém abra a ferramenta para descobrir um problema já em andamento.
+La feature debe mostrar, además de los campos mínimos ya definidos, el método HTTP y la duración de la llamada, ya que esta información ayuda a diferenciar fallas de negocio, fallas de integración y degradación de performance. El objetivo no es convertir la solución en una herramienta técnica genérica de APM, sino ofrecer datos suficientes para que soporte y desarrollo comprendan el comportamiento de las integraciones en el nivel necesario para el producto.
 
----
+#### Feature: Búsqueda con filtros obligatorios para investigación
 
-### Módulo: Dashboards e métricas operacionais
-
-Este módulo resolve a falta de visão agregada sobre o comportamento das integrações e dos workers do Centry. Seu principal usuário é o time de desenvolvimento, que precisa enxergar padrões, volumes e falhas com menos esforço analítico manual. O valor entregue é apoiar acompanhamento operacional e priorização técnica com base em dados consolidados.
-
-#### Feature: Dashboard de volume de requests por marketplace
-
-A feature deve apresentar a quantidade de requests realizados por marketplace, permitindo identificar concentração de tráfego, picos de uso e distribuição operacional entre integrações. Essa visualização ajuda a contextualizar a carga do sistema e a interpretar melhor outras falhas observadas. O valor para o negócio está em entender a operação real do legado ainda ativo.
-
-#### Feature: Dashboard de erros por endpoint
-
-A feature deve consolidar os erros por endpoint para destacar quais integrações ou pontos específicos da comunicação externa apresentam mais falhas. Isso facilita a priorização de investigação e a identificação de comportamentos problemáticos recorrentes. Em vez de depender de leitura caso a caso, o time poderá observar tendências agregadas.
-
-#### Feature: Dashboard de workers com mais falhas
-
-A feature deve mostrar quais workers concentram maior número de falhas, ajudando o time de desenvolvimento a localizar áreas mais instáveis da operação assíncrona. Como os workers têm papel importante na execução das sincronizações, essa métrica conecta diretamente a observabilidade técnica à sustentação do processo de integração. O uso é analítico e de priorização, não de gestão automática dos workers.
+La consulta de requests y responses debe contar con filtros obligatorios para evitar búsquedas demasiado amplias y ayudar al rendimiento de la solución. Los filtros obligatorios definidos hasta ahora son: cliente, marketplace, endpoint, HTTP status, método HTTP y producto. Esta regla de uso diferencia la búsqueda de una búsqueda libre genérica, ya que refleja la necesidad operativa de encontrar rápidamente el recorte correcto sin sobrecargar el sistema.
 
 ---
 
-## Fora do Escopo
+### Módulo: Alertas y monitoreo operativo
 
-> Liste o que foi explicitamente excluído. Registrar o que não será feito evita discussões recorrentes e alinhamentos tardios.
+Este módulo resuelve la detección tardía de fallas críticas en el comportamiento del sistema, especialmente en workers y en escenarios de alto volumen de errores. Será usado inicialmente por desarrollo y por el liderazgo funcional del proyecto para hacer seguimiento de condiciones anormales sin depender solo del análisis reactivo. El valor entregado es reducir el tiempo para percibir incidentes importantes y reaccionar con mayor rapidez.
 
-| Item excluído | Motivo |
+#### Feature: Generación de alertas para workers muertos
+
+La feature debe identificar situaciones en las que existan workers muertos y transformar ese evento en una alerta visible. Como hoy la verificación depende de una consulta manual, este recurso anticipa la percepción de problemas críticos en procesos asíncronos. El alcance de la feature es señalar el incidente, no corregirlo automáticamente.
+
+#### Feature: Generación de alertas para alto volumen de fallas
+
+La feature debe alertar cuando haya un volumen anormalmente alto de fallas en las integraciones monitoreadas. El objetivo es permitir que el equipo perciba degradaciones operativas de forma más rápida, especialmente en integraciones con marketplaces. Los criterios exactos de umbral aún podrán refinarse más adelante, pero el tipo de evento ya está definido como requisito de alcance.
+
+#### Feature: Distribución de alertas en dashboard y por correo electrónico
+
+Las alertas deben ser visibles en dashboard y, idealmente, también enviarse por correo electrónico. Los destinatarios iniciales son Pablo Guzman y el Product Owner, ya que ambos participan en las decisiones y en la respuesta operativa al sistema legado. Esto garantiza que la solución no sea solo pasiva, evitando que alguien tenga que abrir la herramienta para descubrir un problema ya en curso.
+
+---
+
+### Módulo: Dashboards y métricas operativas
+
+Este módulo resuelve la falta de visión agregada sobre el comportamiento de las integraciones y de los workers de Centry. Su principal usuario es el equipo de desarrollo, que necesita ver patrones, volúmenes y fallas con menos esfuerzo analítico manual. El valor entregado es apoyar el seguimiento operativo y la priorización técnica con base en datos consolidados.
+
+#### Feature: Dashboard de volumen de requests por marketplace
+
+La feature debe presentar la cantidad de requests realizados por marketplace, permitiendo identificar la concentración de tráfico, picos de uso y distribución operativa entre integraciones. Esta visualización ayuda a contextualizar la carga del sistema y a interpretar mejor otras fallas observadas. El valor para el negocio está en entender la operación real del legado aún activo.
+
+#### Feature: Dashboard de errores por endpoint
+
+La feature debe consolidar los errores por endpoint para destacar qué integraciones o puntos específicos de la comunicación externa presentan más fallas. Esto facilita la priorización de la investigación y la identificación de comportamientos problemáticos recurrentes. En lugar de depender de una lectura caso a caso, el equipo podrá observar tendencias agregadas.
+
+#### Feature: Dashboard de workers con más fallas
+
+La feature debe mostrar qué workers concentran mayor número de fallas, ayudando al equipo de desarrollo a localizar las áreas más inestables de la operación asíncrona. Como los workers tienen un rol importante en la ejecución de las sincronizaciones, esta métrica conecta directamente la observabilidad técnica con la sustentación del proceso de integración. El uso es analítico y de priorización, no de gestión automática de los workers.
+
+---
+
+## Fuera de Alcance
+
+> Lista lo que fue explícitamente excluido. Registrar lo que no se hará evita discusiones recurrentes y alineaciones tardías.
+
+| Ítem excluido | Motivo |
 |---|---|
-| Correção ampla de bugs do Centry | O projeto é focado em observabilidade e rastreabilidade, não em saneamento geral do legado. |
-| Substituição do Centry por outra plataforma | A iniciativa existe para apoiar a sustentação do sistema atual enquanto ele continua ativo. |
-| Migração de clientes para Anymarket | A migração é um movimento paralelo e não faz parte desta entrega. |
-| Alteração das regras de negócio de sincronização | O objetivo é observar melhor o comportamento atual, sem mudar a lógica funcional das integrações. |
-| Inclusão imediata de logs genéricos de erros internos do Rails | No escopo inicial, a observabilidade está limitada aos requests das integrações com marketplaces. |
+| Corrección amplia de bugs de Centry | El proyecto está enfocado en observabilidad y trazabilidad, no en el saneamiento general del legado. |
+| Sustitución de Centry por otra plataforma | La iniciativa existe para apoyar la sustentación del sistema actual mientras este continúe activo. |
+| Migración de clientes hacia Anymarket | La migración es un movimiento paralelo y no forma parte de esta entrega. |
+| Alteración de las reglas de negocio de sincronización | El objetivo es observar mejor el comportamiento actual, sin cambiar la lógica funcional de las integraciones. |
+| Inclusión inmediata de logs genéricos de errores internos de Rails | En el alcance inicial, la observabilidad está limitada a los requests de las integraciones con marketplaces. |

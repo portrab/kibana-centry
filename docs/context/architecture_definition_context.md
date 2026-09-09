@@ -1,39 +1,39 @@
-# Definição de Arquitetura
+# Definición de Arquitectura
 
-## Padrão Arquitetural Adotado
+## Patrón Arquitectónico Adoptado
 
-**Padrão:** Plugins / extensões sobre monólito Rails
+**Patrón:** Plugins / extensiones sobre monolito Rails
 
-**Justificativa:** O Centry é hoje um monólito Rails em produção, com acoplamento operacional às integrações, workers e persistências já existentes. Como a necessidade deste projeto é adicionar observabilidade sem reestruturar o legado nem alterar a lógica de negócio das sincronizações, a abordagem dominante é estender o monólito com mecanismos de captura de logs e rastreabilidade, integrando esses eventos a uma plataforma externa de observabilidade. Esse padrão reduz risco de entrega, exige menos mudanças estruturais no sistema legado e permite evolução incremental por pontos de extensão, preservando o ritmo viável para um sistema que já está em sustentação e migração gradual de clientes.
-
----
-
-## Como o Sistema está Organizado
-
-O Centry é organizado como um monólito Rails que concentra a lógica principal da aplicação e se integra a um frontend em Vue 2, aos workers assíncronos executados via Sidekiq e às bases PostgreSQL e MongoDB. A aplicação Rails atua como núcleo do sistema, acessando uma ou outra base de dados conforme a necessidade funcional. O processamento assíncrono é enfileirado pela aplicação e consumido por instâncias de Sidekiq, que executam os workers relacionados às sincronizações e integrações. A solução de observabilidade será acoplada a esse fluxo como extensão do monólito, capturando eventos de Rails e Sidekiq e encaminhando-os, por meio de arquivo ou fila intermediária, para uma ferramenta externa de consulta como Kibana ou equivalente.
+**Justificación:** Centry es hoy un monolito Rails en producción, con acoplamiento operativo a las integraciones, workers y persistencias ya existentes. Como la necesidad de este proyecto es agregar observabilidad sin reestructurar el legado ni alterar la lógica de negocio de las sincronizaciones, el enfoque dominante es extender el monolito con mecanismos de captura de logs y trazabilidad, integrando esos eventos a una plataforma externa de observabilidad. Este patrón reduce el riesgo de entrega, exige menos cambios estructurales en el sistema legado y permite una evolución incremental por puntos de extensión, preservando el ritmo viable para un sistema que ya está en sustentación y migración gradual de clientes.
 
 ---
 
-## Decisões Arquiteturais Importantes
+## Cómo está Organizado el Sistema
 
-| Decisão | O que foi decidido | Justificativa |
+Centry está organizado como un monolito Rails que concentra la lógica principal de la aplicación y se integra con un frontend en Vue 2, con los workers asíncronos ejecutados vía Sidekiq y con las bases PostgreSQL y MongoDB. La aplicación Rails actúa como núcleo del sistema, accediendo a una u otra base de datos según la necesidad funcional. El procesamiento asíncrono es encolado por la aplicación y consumido por instancias de Sidekiq, que ejecutan los workers relacionados con las sincronizaciones e integraciones. La solución de observabilidad se acoplará a ese flujo como una extensión del monolito, capturando eventos de Rails y Sidekiq y enviándolos, mediante archivo o cola intermedia, a una herramienta externa de consulta como Kibana o equivalente.
+
+---
+
+## Decisiones Arquitectónicas Importantes
+
+| Decisión | Qué se decidió | Justificación |
 |---|---|---|
-| Ponto de captura de eventos | Os logs de observabilidade serão capturados tanto na aplicação Rails quanto nos workers executados pelo Sidekiq. | Isso permite cobrir tanto chamadas síncronas quanto processamento assíncrono ligado às integrações, que são partes centrais do problema operacional atual. |
-| Plataforma de observabilidade | Os logs e eventos serão centralizados fora do monólito, em uma ferramenta externa de observabilidade. | A centralização externa evita depender da consola de produção para análise e separa a camada de consulta operacional da execução do sistema legado. |
-| Interface de consulta | Kibana é a opção inicial de visualização e consulta, mas ferramentas similares continuam permitidas se se mostrarem mais adequadas ao contexto. | O objetivo do projeto é a capacidade de observação, não a obrigatoriedade de uma marca específica, mantendo flexibilidade de implementação sem perder o direcionamento da solução. |
-| Preservação da lógica de negócio | A iniciativa não deve alterar a lógica de negócio das sincronizações existentes. | O escopo do projeto é melhorar observabilidade e rastreabilidade, reduzindo risco em um sistema legado que ainda precisa operar enquanto ocorre migração de clientes. |
-| Tratamento de payloads e responses grandes | Payloads e responses muito grandes devem ser armazenados de forma comprimida. | Isso ajuda a equilibrar utilidade analítica com restrições de performance, volume e retenção de logs no ambiente produtivo. |
-| Proteção de dados sensíveis | Tokens e api_keys devem ser ocultados ou mascarados antes da persistência dos logs. | A observabilidade não pode expor credenciais sensíveis, especialmente em uma solução que amplia o acesso de consulta para além de quem hoje usa a consola de produção. |
-| Caminho de envio para a plataforma externa | O envio dos logs não será direto da aplicação para a ferramenta final; haverá um arquivo ou fila intermediária antes da ingestão. | Essa decisão reduz acoplamento com a ferramenta de destino e ajuda a controlar impacto de performance no sistema produtivo. |
+| Punto de captura de eventos | Los logs de observabilidad se capturarán tanto en la aplicación Rails como en los workers ejecutados por Sidekiq. | Esto permite cubrir tanto llamadas síncronas como procesamiento asíncrono ligado a las integraciones, que son partes centrales del problema operativo actual. |
+| Plataforma de observabilidad | Los logs y eventos se centralizarán fuera del monolito, en una herramienta externa de observabilidad. | La centralización externa evita depender de la consola de producción para el análisis y separa la capa de consulta operativa de la ejecución del sistema legado. |
+| Interfaz de consulta | Kibana es la opción inicial de visualización y consulta, pero herramientas similares siguen permitidas si resultan más adecuadas al contexto. | El objetivo del proyecto es la capacidad de observación, no la obligatoriedad de una marca específica, manteniendo flexibilidad de implementación sin perder el rumbo de la solución. |
+| Preservación de la lógica de negocio | La iniciativa no debe alterar la lógica de negocio de las sincronizaciones existentes. | El alcance del proyecto es mejorar la observabilidad y la trazabilidad, reduciendo el riesgo en un sistema legado que aún debe operar mientras ocurre la migración de clientes. |
+| Tratamiento de payloads y responses grandes | Los payloads y responses muy grandes deben almacenarse de forma comprimida. | Esto ayuda a equilibrar la utilidad analítica con las restricciones de performance, volumen y retención de logs en el ambiente productivo. |
+| Protección de datos sensibles | Los tokens y api_keys deben ocultarse o enmascararse antes de la persistencia de los logs. | La observabilidad no puede exponer credenciales sensibles, especialmente en una solución que amplía el acceso de consulta más allá de quienes hoy usan la consola de producción. |
+| Ruta de envío hacia la plataforma externa | El envío de los logs no será directo desde la aplicación hacia la herramienta final; habrá un archivo o cola intermedia antes de la ingesta. | Esta decisión reduce el acoplamiento con la herramienta de destino y ayuda a controlar el impacto de performance en el sistema productivo. |
 
 ---
 
 ## Diagramas
 
-**C1 — Contexto:** _Ainda não existe. Deve ser gerado em `architecture/diagrams/c4/c1-context.png` para representar o Centry, os usuários internos e os sistemas externos integrados._  
-**C2 — Containers:** _Ainda não existe. Deve ser gerado em `architecture/diagrams/c4/c2-containers.png` para representar o monólito Rails, frontend Vue 2, Sidekiq, Redis, PostgreSQL, MongoDB e a plataforma externa de observabilidade._  
-**C3 — Componentes:** _Ainda não existe. Deve ser gerado em `architecture/diagrams/c4/c3-components.png` para mostrar os pontos de captura de logs, o fluxo de enfileiramento/arquivo intermediário e a relação com sincronizações e integrações._
+**C1 — Contexto:** _Aún no existe. Debe generarse en `architecture/diagrams/c4/c1-context.png` para representar a Centry, los usuarios internos y los sistemas externos integrados._  
+**C2 — Contenedores:** _Aún no existe. Debe generarse en `architecture/diagrams/c4/c2-containers.png` para representar el monolito Rails, el frontend Vue 2, Sidekiq, Redis, PostgreSQL, MongoDB y la plataforma externa de observabilidad._  
+**C3 — Componentes:** _Aún no existe. Debe generarse en `architecture/diagrams/c4/c3-components.png` para mostrar los puntos de captura de logs, el flujo de encolado/archivo intermedio y la relación con las sincronizaciones e integraciones._
 
 ---
 
-> **Lembrete:** este documento descreve a intenção arquitetural. Quando houver divergência entre o que está aqui e o que está no código, o código deve ser corrigido — ou este documento deve ser atualizado com um ADR justificando a mudança.
+> **Recordatorio:** este documento describe la intención arquitectónica. Cuando exista divergencia entre lo que está aquí y lo que está en el código, el código debe corregirse — o este documento debe actualizarse con un ADR que justifique el cambio.

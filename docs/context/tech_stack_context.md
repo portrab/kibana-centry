@@ -1,87 +1,87 @@
-# Stack de Tecnologia
+# Stack de Tecnología
 
-## Linguagem e Runtime
+## Lenguaje y Runtime
 
-| Item | Tecnologia | Versão | Observação |
+| Ítem | Tecnología | Versión | Observación |
 |---|---|---|---|
-| Linguagem principal | Ruby | 2.3.8 | Linguagem principal do monólito Centry |
-| Runtime / Plataforma | Node.js | 14.21.3 | Usado no projeto frontend em Vue 2 |
-| Gerenciador de pacotes | Bundler | 1.17.3 | Gerenciador principal do backend Rails |
+| Lenguaje principal | Ruby | 2.3.8 | Lenguaje principal del monolito Centry |
+| Runtime / Plataforma | Node.js | 14.21.3 | Usado en el proyecto frontend en Vue 2 |
+| Gestor de paquetes | Bundler | 1.17.3 | Gestor principal del backend Rails |
 
 ---
 
-## Frameworks e Bibliotecas Principais
+## Frameworks y Bibliotecas Principales
 
-| Camada | Framework / Biblioteca | Versão | Finalidade |
+| Capa | Framework / Biblioteca | Versión | Finalidad |
 |---|---|---|---|
-| Backend | Rails | 4.2.1 | Monólito principal da aplicação |
-| Backend | GraphQL, graphql-batch, graphql-client | ~> 1.10 | Exposição e consumo da API GraphQL em `/graphql` |
-| Backend | Devise | Não informado | Autenticação |
-| Backend | Pundit | Não informado | Autorização |
-| Backend | Draper | Não informado | Decoradores |
-| Backend | RABL | Não informado | Construção de views JSON |
-| Backend | Paperclip + S3 | Não informado | Gestão de anexos e armazenamento |
-| Frontend | Vue | ^2.6.11 | Interface web principal |
-| Frontend | Vue CLI / @vue/cli-service | ^4.1.1 | Build e execução do frontend |
-| Frontend | Vuex, vue-router | ^3.1.3 / ^3.1.6 | Gerenciamento de estado e roteamento |
-| Frontend | vue-apollo, @apollo/client | Não informado | Consumo da API GraphQL do Rails |
-| Frontend | apollo3-cache-persist, apollo-link-timeout | Não informado | Persistência de cache e controle de timeout no cliente GraphQL |
-| Frontend | bootstrap-vue, Bootstrap 4 | Não informado | Componentes e estilo de interface |
-| Frontend | vue-select, vue-multiselect-listbox | Não informado | Componentes de seleção |
-| Frontend | vue-sweetalert2, vue-tour, portal-vue, pretty-checkbox-vue | Não informado | Componentes auxiliares de UX/UI |
-| Frontend | jexcel, xlsx, vue-xlsx, jszip, vue-html2pdf | Não informado | Exportação de planilhas, arquivos e PDFs |
-| Frontend | chart.js, vue-chartjs, Cube.js | Não informado | Dashboards, gráficos e BI |
-| Frontend | jquery, moment, moment-timezone, vue-recaptcha, vue-gtag, vue-tinymce-editor, vuedraggable | Não informado | Dependências legadas e funcionalidades auxiliares |
-| ORM / Acesso a dados | ActiveRecord + pg | ~> 0.21 | Acesso ao PostgreSQL |
-| ORM / Acesso a dados | Mongoid | 5.0 | ODM principal para acesso ao MongoDB |
-| Testes | RSpec, mongoid-rspec, FactoryBot, WebMock | Não informado | Testes de backend e apoio a isolamento de dependências |
-| Testes | Jest | Não informado | Testes do frontend |
+| Backend | Rails | 4.2.1 | Monolito principal de la aplicación |
+| Backend | GraphQL, graphql-batch, graphql-client | ~> 1.10 | Exposición y consumo de la API GraphQL en `/graphql` |
+| Backend | Devise | No informado | Autenticación |
+| Backend | Pundit | No informado | Autorización |
+| Backend | Draper | No informado | Decoradores |
+| Backend | RABL | No informado | Construcción de vistas JSON |
+| Backend | Paperclip + S3 | No informado | Gestión de adjuntos y almacenamiento |
+| Frontend | Vue | ^2.6.11 | Interfaz web principal |
+| Frontend | Vue CLI / @vue/cli-service | ^4.1.1 | Build y ejecución del frontend |
+| Frontend | Vuex, vue-router | ^3.1.3 / ^3.1.6 | Gestión de estado y enrutamiento |
+| Frontend | vue-apollo, @apollo/client | No informado | Consumo de la API GraphQL de Rails |
+| Frontend | apollo3-cache-persist, apollo-link-timeout | No informado | Persistencia de caché y control de timeout en el cliente GraphQL |
+| Frontend | bootstrap-vue, Bootstrap 4 | No informado | Componentes y estilo de interfaz |
+| Frontend | vue-select, vue-multiselect-listbox | No informado | Componentes de selección |
+| Frontend | vue-sweetalert2, vue-tour, portal-vue, pretty-checkbox-vue | No informado | Componentes auxiliares de UX/UI |
+| Frontend | jexcel, xlsx, vue-xlsx, jszip, vue-html2pdf | No informado | Exportación de planillas, archivos y PDFs |
+| Frontend | chart.js, vue-chartjs, Cube.js | No informado | Dashboards, gráficos y BI |
+| Frontend | jquery, moment, moment-timezone, vue-recaptcha, vue-gtag, vue-tinymce-editor, vuedraggable | No informado | Dependencias legadas y funcionalidades auxiliares |
+| ORM / Acceso a datos | ActiveRecord + pg | ~> 0.21 | Acceso a PostgreSQL |
+| ORM / Acceso a datos | Mongoid | 5.0 | ODM principal para acceso a MongoDB |
+| Pruebas | RSpec, mongoid-rspec, FactoryBot, WebMock | No informado | Pruebas de backend y apoyo al aislamiento de dependencias |
+| Pruebas | Jest | No informado | Pruebas del frontend |
 
 ---
 
-## Banco de Dados
+## Base de Datos
 
-| Tipo | Tecnologia | Versão | Uso no sistema |
+| Tipo | Tecnología | Versión | Uso en el sistema |
 |---|---|---|---|
-| Relacional | PostgreSQL | Não informado | Dados de OAuth/Doorkeeper e tabelas de suporte; base secundária |
-| Relacional/Documento principal | MongoDB | Não informado | Base principal com produtos, variantes, companhias, usuários, ordens, configurações de integração e histórico de sincronização |
-| Cache | Redis | Não informado | Filas do Sidekiq, locking distribuído com redis-semaphore / SafeRedisSemaphore, redis-objects e caches pontuais por variável de ambiente |
-| Cache | Memcached | Não informado | Cache geral do Rails em produção (`mem_cache_store`) |
-| Busca | mongoid_search | Não informado | Busca full-text dentro do MongoDB; não há Elasticsearch nem OpenSearch em uso hoje |
+| Relacional | PostgreSQL | No informado | Datos de OAuth/Doorkeeper y tablas de soporte; base secundaria |
+| Relacional/Documento principal | MongoDB | No informado | Base principal con productos, variantes, compañías, usuarios, órdenes, configuraciones de integración e historial de sincronización |
+| Caché | Redis | No informado | Colas de Sidekiq, locking distribuido con redis-semaphore / SafeRedisSemaphore, redis-objects y cachés puntuales por variable de ambiente |
+| Caché | Memcached | No informado | Caché general de Rails en producción (`mem_cache_store`) |
+| Búsqueda | mongoid_search | No informado | Búsqueda full-text dentro de MongoDB; no hay Elasticsearch ni OpenSearch en uso hoy |
 
 ---
 
-## Infraestrutura e Cloud
+## Infraestructura y Cloud
 
-| Item | Tecnologia | Observação |
+| Ítem | Tecnología | Observación |
 |---|---|---|
-| Cloud provider | Oracle Cloud | Ambiente hospedado em Oracle Cloud |
-| Containers | Não utiliza | Não há uso de Docker no projeto atual |
-| Orquestração | Não utiliza | Não há Kubernetes nem outro orquestrador |
-| CI/CD | Script + cron em produção | Instâncias de produção leem mudanças da branch `master` via cron |
-| Monitoramento | Scripts operacionais + Sidekiq | Scripts em produção para revisar dados da base e escalar instâncias de Sidekiq quando necessário |
+| Proveedor de cloud | Oracle Cloud | Ambiente alojado en Oracle Cloud |
+| Contenedores | No utiliza | No hay uso de Docker en el proyecto actual |
+| Orquestación | No utiliza | No hay Kubernetes ni otro orquestador |
+| CI/CD | Script + cron en producción | Las instancias de producción leen cambios de la rama `master` vía cron |
+| Monitoreo | Scripts operativos + Sidekiq | Scripts en producción para revisar datos de la base y escalar instancias de Sidekiq cuando sea necesario |
 
 ---
 
-## Sistemas e Componentes Externos
+## Sistemas y Componentes Externos
 
-| Sistema / Componente | Tipo | Finalidade | Como integra |
+| Sistema / Componente | Tipo | Finalidad | Cómo integra |
 |---|---|---|---|
-| Falabella | API / integração de marketplace | Sincronização operacional com marketplace | Integração via APIs do Centry |
-| Ripley | API / integração de marketplace | Sincronização operacional com marketplace | Integração via APIs do Centry |
-| Mercado Livre | API / integração de marketplace | Sincronização operacional com marketplace | Integração via APIs do Centry |
-| Paris | API / integração de marketplace | Sincronização operacional com marketplace | Integração via APIs do Centry |
-| Dafiti | API / integração de marketplace | Sincronização operacional com marketplace | Integração via APIs do Centry |
-| Shopify | API / plataforma externa | Integração com e-commerce | Integração via APIs do Centry |
-| Bsale | API / sistema externo | Integração comercial/operacional | Integração via APIs do Centry |
-| WooCommerce | API / plataforma externa | Integração com e-commerce | Integração via APIs do Centry |
-| Prestashop | API / plataforma externa | Integração com e-commerce | Integração via APIs do Centry |
+| Falabella | API / integración de marketplace | Sincronización operativa con marketplace | Integración vía APIs de Centry |
+| Ripley | API / integración de marketplace | Sincronización operativa con marketplace | Integración vía APIs de Centry |
+| Mercado Libre | API / integración de marketplace | Sincronización operativa con marketplace | Integración vía APIs de Centry |
+| Paris | API / integración de marketplace | Sincronización operativa con marketplace | Integración vía APIs de Centry |
+| Dafiti | API / integración de marketplace | Sincronización operativa con marketplace | Integración vía APIs de Centry |
+| Shopify | API / plataforma externa | Integración con e-commerce | Integración vía APIs de Centry |
+| Bsale | API / sistema externo | Integración comercial/operativa | Integración vía APIs de Centry |
+| WooCommerce | API / plataforma externa | Integración con e-commerce | Integración vía APIs de Centry |
+| Prestashop | API / plataforma externa | Integración con e-commerce | Integración vía APIs de Centry |
 
 ---
 
-## Ferramentas de Desenvolvimento
+## Herramientas de Desarrollo
 
-| Ferramenta | Finalidade |
+| Herramienta | Finalidad |
 |---|---|
 | RubyMine | IDE principal |
-| Postman | Testes e exploração de APIs |
+| Postman | Pruebas y exploración de APIs |

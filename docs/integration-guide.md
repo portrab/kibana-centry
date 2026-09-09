@@ -1,10 +1,10 @@
-# Guia de Integração — centry_observability
+# Guía de Integración — centry_observability
 
-Como conectar a gem `centry_observability` (código Ruby neste repositório) à aplicação Centry (`belanit-inventario`) e à infraestrutura de observabilidade (ELK).
+Cómo conectar la gem `centry_observability` (código Ruby en este repositorio) a la aplicación Centry (`belanit-inventario`) y a la infraestructura de observabilidad (ELK).
 
-## 1. Adicionar a gem ao Centry
+## 1. Agregar la gem a Centry
 
-No `Gemfile` do Centry:
+En el `Gemfile` de Centry:
 
 ```ruby
 gem "centry_observability", git: "git@github.com:portrab/kibana-centry.git"
@@ -21,9 +21,9 @@ CentryObservability.configure do |config|
 end
 ```
 
-## 3. Instrumentar chamadas HTTP a marketplaces
+## 3. Instrumentar llamadas HTTP a marketplaces
 
-Em cada client de integração (ex.: `FalabellaClient`, `RipleyClient`):
+En cada client de integración (ej.: `FalabellaClient`, `RipleyClient`):
 
 ```ruby
 context = {
@@ -46,7 +46,7 @@ end
 
 ## 4. Instrumentar workers Sidekiq
 
-Em `config/initializers/sidekiq.rb`:
+En `config/initializers/sidekiq.rb`:
 
 ```ruby
 Sidekiq.configure_server do |config|
@@ -56,7 +56,7 @@ Sidekiq.configure_server do |config|
 end
 ```
 
-## 5. Subir a plataforma de observabilidade (Elasticsearch + Kibana)
+## 5. Levantar la plataforma de observabilidad (Elasticsearch + Kibana)
 
 ```bash
 cd infra
@@ -67,22 +67,22 @@ curl -X PUT "localhost:9200/_index_template/centry-integrations" \
   -d @elasticsearch/templates/centry-integrations-template.json
 ```
 
-## 6. Instalar o Filebeat no host do Centry
+## 6. Instalar Filebeat en el host de Centry
 
-O Centry não roda em containers, então o Filebeat deve ser instalado diretamente na VM (Oracle Cloud), apontando `infra/filebeat/filebeat.yml` para o caminho real de `log/integrations.log` e para o host do Elasticsearch (via `ELASTICSEARCH_HOST`).
+Centry no corre en contenedores, por lo que Filebeat debe instalarse directamente en la VM (Oracle Cloud), apuntando `infra/filebeat/filebeat.yml` a la ruta real de `log/integrations.log` y al host de Elasticsearch (vía `ELASTICSEARCH_HOST`).
 
-## Decisões de arquitetura já refletidas no código
+## Decisiones de arquitectura ya reflejadas en el código
 
-| Decisão | Onde está implementada |
+| Decisión | Dónde está implementada |
 |---|---|
-| Não bloquear a aplicação em caso de falha de gravação | `LogWriter` grava em thread separada e engole exceções |
-| Envio não-direto (arquivo/fila intermediária) | `LogWriter` escreve em arquivo local; Filebeat faz o envio ao Elasticsearch |
-| Mascaramento de tokens/api_keys | `Sanitizer`, aplicado antes de qualquer persistência |
-| Compressão de payloads/responses grandes | `PayloadCompressor` (gzip + base64) acima de `max_payload_size` |
-| Captura em Rails e em Sidekiq | `RequestLogger` (chamadas HTTP) e `SidekiqServerMiddleware` (workers) |
+| No bloquear la aplicación en caso de falla de escritura | `LogWriter` escribe en un thread separado y captura las excepciones |
+| Envío no directo (archivo/cola intermedia) | `LogWriter` escribe en un archivo local; Filebeat hace el envío a Elasticsearch |
+| Enmascaramiento de tokens/api_keys | `Sanitizer`, aplicado antes de cualquier persistencia |
+| Compresión de payloads/responses grandes | `PayloadCompressor` (gzip + base64) por encima de `max_payload_size` |
+| Captura en Rails y en Sidekiq | `RequestLogger` (llamadas HTTP) y `SidekiqServerMiddleware` (workers) |
 
-## Próximos passos
+## Próximos pasos
 
-- Cobrir os campos mínimos definidos em `scope_features_context.md` nos dashboards do Kibana (volume por marketplace, erros por endpoint, workers com mais falhas).
-- Definir os filtros obrigatórios de busca (cliente, marketplace, endpoint, HTTP status, método HTTP, produto) como saved searches no Kibana.
-- Avaliar critérios de alerta (workers mortos, alto volume de falhas) via Watcher/ElastAlert ou equivalente compatível com a stack.
+- Cubrir los campos mínimos definidos en `scope_features_context.md` en los dashboards de Kibana (volumen por marketplace, errores por endpoint, workers con más fallas).
+- Definir los filtros obligatorios de búsqueda (cliente, marketplace, endpoint, HTTP status, método HTTP, producto) como saved searches en Kibana.
+- Evaluar criterios de alerta (workers muertos, alto volumen de fallas) vía Watcher/ElastAlert o equivalente compatible con la stack.
